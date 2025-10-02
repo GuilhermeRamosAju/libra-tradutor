@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Teste WebSocket</title>
+</head>
+
+<body>
+    <h1>Cliente WebSocket</h1>
+    <pre id="log"></pre>
+
+    <script>
+        let log = document.getElementById("log");
+        function logMsg(msg) {
+            log.textContent += msg + "\n";
+        }
+
+        let ws = new WebSocket("ws://localhost:8765");
+        ws.onopen = () => logMsg("Conectado!");
+        ws.onmessage = (msg) => logMsg("Recebido: " + msg.data);
+    </script>
+</body>
+
+</html>
