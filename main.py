@@ -15,15 +15,28 @@ def classificar_gesto(landmarks):
 
 async def servidor_websocket(websocket):
     clientes.add(websocket)
+    print("Novo cliente conectado:", websocket.remote_address)
     try:
+        await websocket.send("Conexão estabelecida com sucesso!")
         async for _ in websocket:
             pass
     finally:
         clientes.remove(websocket)
+        print("Cliente desconectado:", websocket.remote_address)
 
 async def enviar_para_clientes(mensagem):
     if clientes:
-        await asyncio.wait([cliente.send(mensagem) for cliente in clientes])
+        removidos = set()
+        for cliente in clientes:
+            try:
+                await cliente.send(mensagem)
+            except Exception as e:
+                print("Erro ao enviar para cliente:", e)
+                removidos.add(cliente)
+        for r in removidos:
+            clientes.remove(r)
+    else:
+        print("Nenhum cliente conectado no momento.")
 
 # ------------------------------
 # Loop da câmera recebe o loop principal como parâmetro
